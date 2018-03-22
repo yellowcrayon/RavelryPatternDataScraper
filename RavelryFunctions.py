@@ -184,6 +184,7 @@ def importPatternIDs(filePath):
 
     return IDsList  # A list of strings--each element is one pattern ID
 
+
 def makePatternQueryString(IDsList):
     # Function that constructs a pattern query string
     # IDsList should be a list of strings
@@ -193,10 +194,11 @@ def makePatternQueryString(IDsList):
 
     return queryString
 
-def constructPatternList(pD):
+
+def constructPatternTuple(pD):
     """This function takes in a dictionary of parsed pattern data and returns an ordered list of pattern data"""
 
-    patternList = [pD['id'], pD['name'], pD['permalink'],
+    patternTuple = (pD['id'], pD['name'], pD['permalink'],
                    pD['downloadable'], pD['ravelry_download'],
                    pD['free'], pD['price'], pD['currency'], pD['currency_symbol'],
                    pD['projects_count'], pD['queued_projects_count'], pD['favorites_count'], pD['comments_count'],
@@ -211,6 +213,6 @@ def constructPatternList(pD):
                    pD['pattern_categories_names'], pD['pattern_attribute_permalinks'],
                    pD['gauge_pattern'], pD['gauge_description'],
                    pD['yarn_weight_description'], pD['yardage_description'],
-                   pD['packs_yarn_ids'], pD['packs_yarn_names'], pD['packs_colorways']]
+                   pD['packs_yarn_ids'], pD['packs_yarn_names'], pD['packs_colorways'])
 
-    return patternList
+    return patternTuple
