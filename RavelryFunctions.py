@@ -172,3 +172,45 @@ def parsePatData(patternData):
 
 #         truthList = ['true','True'] #List of strings to compare to when converting a string to a bool
 #         Turns out that python already recognized these variables as bools, so we don't need a truthList
+
+
+def importPatternIDs(filePath):
+    # Function that imports the patterin IDs from a file
+    mode = 'r'
+    IDsList = []
+    with open(filePath, mode) as f:  # Open the file.
+        for line in f:
+            IDsList.append(line.rstrip())
+
+    return IDsList  # A list of strings--each element is one pattern ID
+
+def makePatternQueryString(IDsList):
+    # Function that constructs a pattern query string
+    # IDsList should be a list of strings
+    s = '+'
+    baseString = 'https://api.ravelry.com/patterns.json?ids='
+    queryString = baseString + s.join(IDsList)  # Concatenate all elements in patIDs using s as a separator
+
+    return queryString
+
+def constructPatternList(pD):
+    """This function takes in a dictionary of parsed pattern data and returns an ordered list of pattern data"""
+
+    patternList = [pD['id'], pD['name'], pD['permalink'],
+                   pD['downloadable'], pD['ravelry_download'],
+                   pD['free'], pD['price'], pD['currency'], pD['currency_symbol'],
+                   pD['projects_count'], pD['queued_projects_count'], pD['favorites_count'], pD['comments_count'],
+                   pD['rating_count'], pD['ratings_average'], pD['difficulty_count'], pD['difficulty_average'],
+                   pD['yardage_max'], pD['yardage'], pD['gauge'], pD['row_gauge'], pD['sizes_available'],
+                   pD['author_id'], pD['author_name'], pD['author_permalink'],
+                   pD['author_patterns_count'], pD['author_favorites_count'],
+                   pD['author_users_usernames'], pD['author_users_ids'],
+                   pD['num_photos'], pD['notes_length'],
+                   pD['pattern_type_permalink'], pD['pattern_type_name'], pD['pattern_type_clothing'],
+                   pD['craft_permalink'], pD['craft_name'],
+                   pD['pattern_categories_names'], pD['pattern_attribute_permalinks'],
+                   pD['gauge_pattern'], pD['gauge_description'],
+                   pD['yarn_weight_description'], pD['yardage_description'],
+                   pD['packs_yarn_ids'], pD['packs_yarn_names'], pD['packs_colorways']]
+
+    return patternList

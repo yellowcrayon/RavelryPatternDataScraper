@@ -1,12 +1,12 @@
 # import sqlite3 as sq
-import requests as rq #Import the requests library--a library that makes it easy to make HTTP requests to APIs
+import requests as rq  # Import the requests library--a library that makes it easy to make HTTP requests to APIs
 # import time as time
 # import matplotlib.pyplot as plt
 import RavelryFunctions as rav
 
-#Open my Ravelry authentication values
-path = 'C:/Users/Jamie/Desktop/RavelrySecret.txt' #Path to the file that holds my keys--the username and password given to me by Ravelry for my Basic Auth, read only app
-mode = 'r' #read mode--I'll only need to read the username and password from the file
+# Open my Ravelry authentication values
+path = 'C:/Users/Jamie/Desktop/RavelrySecret.txt'  # Path to the file that holds my keys--the username and password given to me by Ravelry for my Basic Auth, read only app
+mode = 'r'  # read mode--I'll only need to read the username and password from the file
 
 keys = []  # The list where I'll store my username and password
 with open(path, mode) as f:  # Open the file
