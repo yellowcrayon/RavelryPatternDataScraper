@@ -65,9 +65,9 @@ def parsePatData(patternData):
         patternDict = {}  # Initialize an empty dictionary--this is where we'll store all of the data
 
         # Single item bools
-        patternDict['downloadable'] = te(patternData.get('downloadable'), bool)         # Bool; whether the pattern can be downloaded (on Ravelry or on another site)
-        patternDict['ravelry_download'] = te(patternData.get('ravelry_download'), bool) # Bool; whether the pattern is available as a download from Ravelry (free or for money)
-        patternDict['free'] = te(patternData.get('free'), bool)                         # Bool; whether the pattern is available for no cost
+        patternDict['downloadable'] = te(patternData.get('downloadable'), int)         # Bool; whether the pattern can be downloaded (on Ravelry or on another site)
+        patternDict['ravelry_download'] = te(patternData.get('ravelry_download'), int) # Bool; whether the pattern is available as a download from Ravelry (free or for money)
+        patternDict['free'] = te(patternData.get('free'), int)                         # Bool; whether the pattern is available for no cost
 
         # Single item ints
         patternDict['queued_projects_count'] = te(patternData.get('queued_projects_count'), int) # Int; number of user queues the pattern is in
@@ -110,14 +110,14 @@ def parsePatData(patternData):
         patternDict['author_users_ids'] = te(makeAttrList(tempData, 'id'), str)             # String; list of author usernames
 
         # Items from 'photos'
-        tempData = patternData.get('photos', {}) # If the 'photos' key doesn't exist, return an empty list so that the following line can still run
+        tempData = patternData.get('photos', {})  # If the 'photos' key doesn't exist, return an empty list so that the following line can still run
         patternDict['num_photos'] = len(tempData) # Int; the number of photos the pattern has
 
         # Items from 'pattern_type'
         tempData = patternData.get('pattern_type', {})
         patternDict['pattern_type_permalink'] = te(tempData.get('permalink'), str) # String; a word that describes the type of pattern, e.g. 'pullover'
         patternDict['pattern_type_name'] = te(tempData.get('name'), str)           # String; another descriptive word
-        patternDict['pattern_type_clothing'] = te(tempData.get('clothing'), bool)  # Bool; whether or not the pattern is considered clothing
+        patternDict['pattern_type_clothing'] = te(tempData.get('clothing'), int)  # Bool; whether or not the pattern is considered clothing
 
         # Items from 'craft'
         tempData = patternData.get('craft', {})
@@ -137,7 +137,7 @@ def parsePatData(patternData):
 
         # Items from 'pattern_attributes'
         tempData = patternData.get('pattern_attributes', []) # tempData will be a list of dictionaries
-        patternDict['pattern_attribute_permalinks'] = te(makeAttrList(tempData, 'permalink'),str) # String; the list of attribute descriptors
+        patternDict['pattern_attribute_permalinks'] = te(makeAttrList(tempData, 'permalink'), str) # String; the list of attribute descriptors
 
         # Items from 'packs'
         tempData = patternData.get('packs', [])  # A list of data about the suggested yarn for the pattern
@@ -202,7 +202,7 @@ def constructPatternTuple(pD):
                    pD['downloadable'], pD['ravelry_download'],
                    pD['free'], pD['price'], pD['currency'], pD['currency_symbol'],
                    pD['projects_count'], pD['queued_projects_count'], pD['favorites_count'], pD['comments_count'],
-                   pD['rating_count'], pD['ratings_average'], pD['difficulty_count'], pD['difficulty_average'],
+                   pD['rating_count'], pD['rating_average'], pD['difficulty_count'], pD['difficulty_average'],
                    pD['yardage_max'], pD['yardage'], pD['gauge'], pD['row_gauge'], pD['sizes_available'],
                    pD['author_id'], pD['author_name'], pD['author_permalink'],
                    pD['author_patterns_count'], pD['author_favorites_count'],
