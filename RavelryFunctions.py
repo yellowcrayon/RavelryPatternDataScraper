@@ -1,3 +1,8 @@
+import time
+import requests as rq
+import math
+
+
 def getNestedAttributes(Dict, attrList, levelKey, attrKey):
     # Take a dictionary of nested dictionaries,
     # go down each level of the nested dictionary and construct a list of all the values (attributes) that correspond to attrKey.
@@ -216,3 +221,62 @@ def constructPatternTuple(pD):
                    pD['packs_yarn_ids'], pD['packs_yarn_names'], pD['packs_colorways'])
 
     return patternTuple
+
+
+def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime, user, pswd):
+    """"""  # TODO: Write doc string
+    # Wrap this whole function in a try/except?
+
+    for i in range(0, len(patternIDs), batchSize):  # Split the patternIDs into batches of length batchSize
+        batchIDs = patternIDs[i:i+batchSize]  # Take the desired portion of patternIDs
+        queryString = makePatternQueryString(batchIDs)  # Construct the api query string
+        # print('i = ', i, 'i + batchSize = ', i+batchSize)
+        # print(batchIDs)
+        # print(queryString)
+
+        response = rq.get(queryString, auth=(user, pswd))  # Ask Ravelry for the pattern data
+        responseStr = str(response)  # responseStr is the API's response code, e.g. 404, 500, etc.
+        # print(response)
+
+        time.sleep(waitTime)  # Wait a moment to avoid spooking the API
+
+        if responseStr == '<Response [200]>':  # If the response is successful, parse and save the data to the database
+
+            data = response.json()['patterns']
+
+            for ID in batchIDs:  # Store the data corresponding to each pattern ID one by one
+                patternData = data[ID]
+                patternDict = parsePatData(patternData)
+
+                if not patternDict:  # If patternDict returns None, then skip this pattern ID
+                    # This means that something serious has gone wrong for this particular pattern ID.
+                    print('Error parsing pattern data, skipping pattern ID ', ID)
+                    break
+
+                patternTuple = constructPatternTuple(patternDict)  # Parse our pattern data into an ordered tuple
+                # print(patternTuple)
+                # print(len(response.json()['patterns']))
+
+                # Insert data from this pattern into the table
+                tableString = ''' INSERT OR IGNORE INTO patternData1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''  # Ignores entries with a repeated primary key (the pattern ID)
+                c.execute(tableString, patternTuple)
+
+            conn.commit()  # Save the changes to the table
+
+        # If we get a data error,
+        elif responseStr in ['<Response [404]>', '<Response [500]>', '<Response [503]>', '<Response [504]>']:
+
+            newBatchSize = 10**math.floor(math.log10(batchSize-1))  # Nearest power of 10 that is smaller than batchSize
+            # e.g. if batchSize = 4291, then newBatchSize = 1000; if batchSize = 100, then newBatchSize = 10
+
+            print(responseStr, ' in pattern IDs ', batchIDs[0], 'to ', batchIDs[-1], '; reducing batchSize to ', newBatchSize)
+            # Maybe better to store and save a list as a text file so I can go back to the bad sections more easliy?
+
+            # Recursively call this function with a smaller batchSize on the current range of batchIDs
+            # ? I think recursively calling this once will work
+
+        # If we get another kind of error,
+        else:
+            # ??? What to return? return responseStr
+            print(responseStr,' in pattern IDs ',batchIDs)
+
