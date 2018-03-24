@@ -32,8 +32,7 @@ def getNestedAttributes(Dict, attrList, levelKey, attrKey):
 
         else:  # If there are more levels within the nested dictionary.
             attrList.append(tempVal)  # Append the value associated with attrKey from this level of the dictionary.
-            return getNestedAttributes(tempDict, attrList, levelKey,
-                                       attrKey)  # Go down one level in the nested dictionary and look for more data.
+            return getNestedAttributes(tempDict, attrList, levelKey, attrKey)  # Go down one level in the nested dictionary and look for more data.
 
     except:  # If anything goes wrong, return False
         return False
@@ -61,6 +60,8 @@ def te(codeChunk, func):
     except:
         return None
 
+# ??? Could make a more general te function te(codeChunk, func, returnVal) and return returnVal instead of None
+# This could help in places like num_photos where a None should actually be 0
 
 def parsePatData(patternData):
     # This function will take in the json data from a single pattern ID,
@@ -70,15 +71,15 @@ def parsePatData(patternData):
 
         patternDict = {}  # Initialize an empty dictionary--this is where we'll store all of the data
 
-        # Single item bools
-        patternDict['downloadable'] = te(patternData.get('downloadable'), int)         # Bool; whether the pattern can be downloaded (on Ravelry or on another site)
-        patternDict['ravelry_download'] = te(patternData.get('ravelry_download'), int) # Bool; whether the pattern is available as a download from Ravelry (free or for money)
-        patternDict['free'] = te(patternData.get('free'), int)                         # Bool; whether the pattern is available for no cost
+        # Single item bools--must convert to int
+        patternDict['downloadable'] = te(patternData.get('downloadable'), int)         # Int; whether the pattern can be downloaded (on Ravelry or on another site)
+        patternDict['ravelry_download'] = te(patternData.get('ravelry_download'), int) # Int; whether the pattern is available as a download from Ravelry (free or for money)
+        patternDict['free'] = te(patternData.get('free'), int)                         # Int; whether the pattern is available for no cost
 
         # Single item ints
         patternDict['queued_projects_count'] = te(patternData.get('queued_projects_count'), int) # Int; number of user queues the pattern is in
         patternDict['rating_count'] = te(patternData.get('rating_count'), int)                   # Int; number of times the pattern has been rated
-        patternDict['id'] = te(patternData.get('id'), int) # Int; pattern ID
+        patternDict['id'] = te(patternData.get('id'), int)                                       # Int; pattern ID
         patternDict['favorites_count'] = te(patternData.get('favorites_count'), int)             # Int; number of times the pattern has been favorited
         patternDict['difficulty_count'] = te(patternData.get('difficulty_count'), int)           # Int; number of difficulty ratings the pattern has received
         patternDict['projects_count'] = te(patternData.get('projects_count'), int)               # Int; number of projects made from this pattern
@@ -140,7 +141,10 @@ def parsePatData(patternData):
 
         # Items from 'notes'
         tempData = patternData.get('notes','') # if the 'notes' key is not found, return an empty string so the following lines can still run
-        patternDict['notes_length'] = len(tempData) # Int; the number of characters in the pattern notes
+        if not tempData:  # If tempData is type None, we can't take its len, so set notes_length to 0 instead
+            patternDict['notes_length'] = 0
+        else:
+            patternDict['notes_length'] = len(tempData) # Int; the number of characters in the pattern notes
 
         # Items from 'pattern_attributes'
         tempData = patternData.get('pattern_attributes', []) # tempData will be a list of dictionaries

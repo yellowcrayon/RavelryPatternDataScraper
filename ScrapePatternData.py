@@ -63,6 +63,7 @@ rav.scrapeRavelryPatternData(c, conn, tableName, patIDs, batchSize, waitTime, au
 conn.close()
 
 # Save the stored and failed IDs lists to files
+mode = 'a'
 path = 'C:/Users/Jamie/Desktop/storedIDs1.txt'
 with open(path, mode) as out:
     out.writelines(map(str, storedIDsList))  # Using map is a quick and dirty way to turn storedIDsList into an iterator
