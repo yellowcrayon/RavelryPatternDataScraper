@@ -1,4 +1,3 @@
-import requests as rq  # Import the requests library--a library that makes it easy to make HTTP requests to APIs
 import time as time
 import RavelryFunctions as rav
 import sqlite3 as sq
@@ -44,21 +43,23 @@ c.execute("CREATE TABLE patternData1 (id int PRIMARY KEY, name text, permalink t
 
 time_start = time.clock()
 
+# Scraping parameters
 # Scraping test run -- first 10 000 pattern IDs
 batchSize = 300  # I'm intentionally using a larger batch size than I feel I ought to for the test, to see if my code
 # for decreasing batch size works
 patIDs = patternIDs[0:100000:]  # Test the scraping on just the first 100 000 pattern
 waitTime = 5  # Time to wait between API requests. I might decrease this if I see in the log files that it takes
 # a few seconds just to parse the data and insert it into the table.
-
 tableName = 'patternData1'  # ??? Function doesn't use this yet but might in the future.
 authTuple = (user, pswd)  # API authentication parameters
 storedIDsList = []  # List of IDs whose data the function was able to store in the table; should initialize with []
 failedIDsList = []  # List of IDs whose data the function could not store in the table; should initialize with []
 # storedIDsList and failedIDsList will end up as lists of strings
 
+# Perform the scraping
 rav.scrapeRavelryPatternData(c, conn, tableName, patIDs, batchSize, waitTime, authTuple, storedIDsList, failedIDsList)
 
+# Close the database connection
 conn.close()
 
 # Save the stored and failed IDs lists to files
