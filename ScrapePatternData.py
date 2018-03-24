@@ -58,7 +58,8 @@ time_start = time.clock()
 
 # Scraping parameters--full run
 batchSize = 200
-patIDs = patternIDs[0:100000:]  # Test the scraping on just the first 5000 pattern IDs
+# patIDs = patternIDs[0:100000:]  # Scraping the first 100 000 pattern IDs
+patIDs = patternIDs[100000:300001:]  # Scraping the next 200 000 pattern IDs
 waitTime = 5  # Time to wait between API requests.
 tableName = 'patternData1'  # ??? Function doesn't use this yet but might in the future.
 authTuple = (user, pswd)  # API authentication parameters
