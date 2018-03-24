@@ -229,6 +229,7 @@ def constructPatternTuple(pD):
 logging.basicConfig(filename='scrapeRavelryPatternData.log', level=logging.INFO)
 # ??? Check patternIDs for null values in the main function
 
+
 def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime, authTuple, storedIDsList, failedIDsList):
     """"""  # TODO: Write doc string
     # batchSize is assumed to be an integer.
@@ -236,6 +237,9 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
     # storedIDsList should be [] in the initial function call.
     # failedIDsList should be [] in the initial function call.
     # authTuple is a tuple of the username and password, e.g. authTuple = (user, pswd)
+    # patternIDs should be a list of strings where each string is an integer from 1 to ~800000,
+    # e.g. patternIDs = ['387238,'12434','29']. The patternIDs are not required to be ordered, but ordering them
+    # will help with debugging.
 
     if batchSize < 1:  # Recursion stop condition.
 
@@ -277,12 +281,17 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
                     logging.info('Error parsing pattern data, skipping pattern ID ' + str(ID) + '.')
 
                 else:
+                    # ??? Put a try/except block inside this else statement in case there is a problem saving the data
+                    # to the table?
+
                     patternTuple = constructPatternTuple(patternDict)  # Parse our pattern data into an ordered tuple.
 
                     # Insert data from this pattern into the table.
                     tableString = ''' INSERT OR IGNORE INTO patternData1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''  # Ignores entries with a repeated primary key (the pattern ID)
                     c.execute(tableString, patternTuple)
-                    # ??? Write a function to generate the tableString
+                    # TODO: Write a function to generate the tableString,
+                    # ??? maybe use that function to generate the tableSTring in the main code
+                    # and pass tableString into this function?
 
                     storedIDsList.append(ID)  # Add this ID to the list of IDs whose data were stored in the table.
 
@@ -317,7 +326,7 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
                 # that get broken into batches of 100 IDs, then the final batch will have only 21 elements.
 
                 tempBatchSize = len(batchIDs)  # Set a temporary batch size equal to the number of IDs in this batch.
-                newBatchSize = 10 ** math.floor(math.log10(tempBatchSize - 1))  # Nearest power of 10 < number of IDs.
+                newBatchSize = 10**math.floor(math.log10(tempBatchSize-1))  # Nearest power of 10 < number of IDs.
 
             else:
                 newBatchSize = 10**math.floor(math.log10(batchSize-1))  # Nearest power of 10 that is < than batchSize.
@@ -330,7 +339,7 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
             logging.info(responseStr + ' in pattern IDs ' + str(batchIDs[0]) + ' to '
                          + str(batchIDs[-1]) + '; reducing batchSize to ' + str(newBatchSize) + '.')
 
-            scrapeRavelryPatternData(c, conn, tableName, batchIDs, newBatchSize, waitTime, user, pswd, storedIDsList, failedIDsList)
+            scrapeRavelryPatternData(c, conn, tableName, batchIDs, newBatchSize, waitTime, authTuple, storedIDsList, failedIDsList)
 
         else:
             # If we get another kind of API response code, STOP THE FUNCTION.
@@ -346,7 +355,7 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
             # I haven't found any documentation that specifies the request limits.
             # 503 Service Unavailable: returned if the Ravelry API is down / not avaiable. If we get this error, then
             # we should stop and manually check on the server, and start the function again when the server is back up.
-            msg = responseStr + ' in pattern IDs ' + str(batchIDs[0]) + ' to ' + str(batchIDs[-1]) + '; STOPPING THE FUNCTION.'
+            msg = responseStr + ' in pattern IDs ' + str(batchIDs[0]) + ' to ' + str(batchIDs[-1]) + '; STOPPING FUNCTION scrapeRavelryPatternData.'
             logging.info(msg)
             logging.critical(msg)
 
@@ -354,6 +363,3 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
 
     return True  # If the function's largest for loop finishes, this will return True and either go back up the
     # recursion chain, or end the function.
-
-
-# ??? Add published date to everything!!!
