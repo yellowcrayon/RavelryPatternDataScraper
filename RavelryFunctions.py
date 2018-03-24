@@ -103,6 +103,7 @@ def parsePatData(patternData):
         patternDict['currency'] = te(patternData.get('currency'), str)                             # String; a string describing the currency, e.g. USD
         patternDict['name'] = te(patternData.get('name'), str)  # String; the pattern name
         patternDict['difficulty_average'] = te(patternData.get('difficulty_average'), str)         # String; the average difficulty rating of the pattern, on a scale from 0 to 10, with ? as unknown
+        patternDict['published'] = te(patternData.get('published'), str)                           # String; the date the pattern was published in the form yyyy/mm/dd
 
         # Items from 'pattern_author'
         tempData = patternData.get('pattern_author', {})  # Data on the pattern's author
@@ -204,22 +205,22 @@ def makePatternQueryString(IDsList):
 def constructPatternTuple(pD):
     """This function takes in a dictionary of parsed pattern data and returns an ordered list of pattern data"""
 
-    patternTuple = (pD['id'], pD['name'], pD['permalink'],
-                   pD['downloadable'], pD['ravelry_download'],
-                   pD['free'], pD['price'], pD['currency'], pD['currency_symbol'],
-                   pD['projects_count'], pD['queued_projects_count'], pD['favorites_count'], pD['comments_count'],
-                   pD['rating_count'], pD['rating_average'], pD['difficulty_count'], pD['difficulty_average'],
-                   pD['yardage_max'], pD['yardage'], pD['gauge'], pD['row_gauge'], pD['sizes_available'],
-                   pD['author_id'], pD['author_name'], pD['author_permalink'],
-                   pD['author_patterns_count'], pD['author_favorites_count'],
-                   pD['author_users_usernames'], pD['author_users_ids'],
-                   pD['num_photos'], pD['notes_length'],
-                   pD['pattern_type_permalink'], pD['pattern_type_name'], pD['pattern_type_clothing'],
-                   pD['craft_permalink'], pD['craft_name'],
-                   pD['pattern_categories_names'], pD['pattern_attribute_permalinks'],
-                   pD['gauge_pattern'], pD['gauge_description'],
-                   pD['yarn_weight_description'], pD['yardage_description'],
-                   pD['packs_yarn_ids'], pD['packs_yarn_names'], pD['packs_colorways'])
+    patternTuple = (pD['id'], pD['name'], pD['permalink'], pD['published'],
+                    pD['downloadable'], pD['ravelry_download'],
+                    pD['free'], pD['price'], pD['currency'], pD['currency_symbol'],
+                    pD['projects_count'], pD['queued_projects_count'], pD['favorites_count'], pD['comments_count'],
+                    pD['rating_count'], pD['rating_average'], pD['difficulty_count'], pD['difficulty_average'],
+                    pD['yardage_max'], pD['yardage'], pD['gauge'], pD['row_gauge'], pD['sizes_available'],
+                    pD['author_id'], pD['author_name'], pD['author_permalink'],
+                    pD['author_patterns_count'], pD['author_favorites_count'],
+                    pD['author_users_usernames'], pD['author_users_ids'],
+                    pD['num_photos'], pD['notes_length'],
+                    pD['pattern_type_permalink'], pD['pattern_type_name'], pD['pattern_type_clothing'],
+                    pD['craft_permalink'], pD['craft_name'],
+                    pD['pattern_categories_names'], pD['pattern_attribute_permalinks'],
+                    pD['gauge_pattern'], pD['gauge_description'],
+                    pD['yarn_weight_description'], pD['yardage_description'],
+                    pD['packs_yarn_ids'], pD['packs_yarn_names'], pD['packs_colorways'])
 
     return patternTuple
 
@@ -227,15 +228,14 @@ def constructPatternTuple(pD):
 # Configure the scraper's log file
 logging.basicConfig(filename='scrapeRavelryPatternData.log', level=logging.INFO)
 # ??? Check patternIDs for null values in the main function
-# ??? Check that logging works when I run a scraping test
 
-def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime, user, pswd, storedIDsList, failedIDsList):
+def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime, authTuple, storedIDsList, failedIDsList):
     """"""  # TODO: Write doc string
     # batchSize is assumed to be an integer.
     # batchIDs is assumed to b a non-empty list of integers.
     # storedIDsList should be [] in the initial function call.
     # failedIDsList should be [] in the initial function call.
-    # Wrap this whole function in a try/except?
+    # authTuple is a tuple of the username and password, e.g. authTuple = (user, pswd)
 
     if batchSize < 1:  # Recursion stop condition.
 
@@ -253,7 +253,7 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
                      + ' IDs from ID ' + str(batchIDs[0]) + ' to ' + str(batchIDs[-1]) + '.')
 
         response_time_start = time.clock()
-        response = rq.get(queryString, auth=(user, pswd))  # Ask Ravelry for the pattern data.
+        response = rq.get(queryString, auth=authTuple)  # Ask Ravelry for the pattern data.
         response_time_stop = time.clock()
 
         responseStr = str(response)  # responseStr is the API's response code, e.g. 404, 500, etc.
@@ -280,7 +280,7 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
                     patternTuple = constructPatternTuple(patternDict)  # Parse our pattern data into an ordered tuple.
 
                     # Insert data from this pattern into the table.
-                    tableString = ''' INSERT OR IGNORE INTO patternData1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''  # Ignores entries with a repeated primary key (the pattern ID)
+                    tableString = ''' INSERT OR IGNORE INTO patternData1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''  # Ignores entries with a repeated primary key (the pattern ID)
                     c.execute(tableString, patternTuple)
                     # ??? Write a function to generate the tableString
 
@@ -355,3 +355,5 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
     return True  # If the function's largest for loop finishes, this will return True and either go back up the
     # recursion chain, or end the function.
 
+
+# ??? Add published date to everything!!!
