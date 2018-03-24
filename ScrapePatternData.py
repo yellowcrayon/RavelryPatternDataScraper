@@ -27,19 +27,19 @@ patternIDs = rav.importPatternIDs(filePath)
 conn = sq.connect('C:/Users/Jamie/Desktop/ravelryData1.db')  # Opens or creates the database
 c = conn.cursor()
 
-# Create a table in the database -- ONLY RUN THIS ONCE, COMMENT THIS LINE OUT IF YOU NEED TO ADD TO THE TABLE
-c.execute("CREATE TABLE patternData1 (id int PRIMARY KEY, name text, permalink text, "
-          + "published text, downloadable integer, "
-          + "ravelry_download integer, free integer, price real, currency text, currency_symbol text, "
-          + "projects_count integer, queued_projects_count integer, favorites_count integer, comments_count integer, "
-          + "rating_count integer, rating_average real, difficulty_count integer, difficulty_average text, "
-          + "yardage_max real, yardage real, gauge real, row_gauge text, sizes_available text, author_id integer, "
-          + "author_name text, author_permalink text, author_patterns_count integer, author_favorites_count integer, "
-          + "author_users_usernames text, author_users_ids text, num_photos integer, notes_length integer, "
-          + "pattern_type_permalink text, pattern_type_name text, pattern_type_clothing text, craft_permalink text, "
-          + "craft_name text, pattern_categories_name text, pattern_attributes_permalinks text, gauge_pattern text, "
-          + "gauge_description text, yarn_weight_description text, yardage_description text, packs_yarn_ids text, "
-          + "packs_yarn_names text, packs_colorways text)")
+# # Create a table in the database -- ONLY RUN THIS ONCE, COMMENT THIS LINE OUT IF YOU NEED TO ADD TO THE TABLE
+# c.execute("CREATE TABLE patternData1 (id int PRIMARY KEY, name text, permalink text, "
+#           + "published text, downloadable integer, "
+#           + "ravelry_download integer, free integer, price real, currency text, currency_symbol text, "
+#           + "projects_count integer, queued_projects_count integer, favorites_count integer, comments_count integer, "
+#           + "rating_count integer, rating_average real, difficulty_count integer, difficulty_average text, "
+#           + "yardage_max real, yardage real, gauge real, row_gauge text, sizes_available text, author_id integer, "
+#           + "author_name text, author_permalink text, author_patterns_count integer, author_favorites_count integer, "
+#           + "author_users_usernames text, author_users_ids text, num_photos integer, notes_length integer, "
+#           + "pattern_type_permalink text, pattern_type_name text, pattern_type_clothing text, craft_permalink text, "
+#           + "craft_name text, pattern_categories_name text, pattern_attributes_permalinks text, gauge_pattern text, "
+#           + "gauge_description text, yarn_weight_description text, yardage_description text, packs_yarn_ids text, "
+#           + "packs_yarn_names text, packs_colorways text)")
 
 time_start = time.clock()
 

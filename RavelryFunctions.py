@@ -326,10 +326,10 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
                 # that get broken into batches of 100 IDs, then the final batch will have only 21 elements.
 
                 tempBatchSize = len(batchIDs)  # Set a temporary batch size equal to the number of IDs in this batch.
-                newBatchSize = 10**math.floor(math.log10(tempBatchSize-1))  # Nearest power of 10 < number of IDs.
+                newBatchSize = 10**(math.ceil(math.log10(tempBatchSize))-1)  # Nearest power of 10 < number of IDs.
 
             else:
-                newBatchSize = 10**math.floor(math.log10(batchSize-1))  # Nearest power of 10 that is < than batchSize.
+                newBatchSize = 10**(math.floor(math.log10(batchSize))-1)  # Nearest power of 10 that is < than batchSize.
                 # e.g. if batchSize = 4291, then newBatchSize = 1000; if batchSize = 100, then newBatchSize = 10.
 
             # Recursively call this function with a smaller batchSize on the current range of batchIDs.
