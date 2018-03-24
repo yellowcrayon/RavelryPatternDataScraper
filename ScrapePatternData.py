@@ -24,32 +24,42 @@ filePath = root + fileName + extension
 patternIDs = rav.importPatternIDs(filePath)
 
 # Set up database
-conn = sq.connect('C:/Users/Jamie/Desktop/ravelryData1.db')  # Opens or creates the database
+conn = sq.connect('C:/Users/Jamie/Desktop/ravelryData2.db')  # Opens or creates the database
 c = conn.cursor()
 
 # Create a table in the database -- ONLY RUN THIS ONCE, COMMENT THIS LINE OUT IF YOU NEED TO ADD TO THE TABLE
-# c.execute("CREATE TABLE patternData1 (id int PRIMARY KEY, name text, permalink text, "
-#           + "published text, downloadable integer, "
-#           + "ravelry_download integer, free integer, price real, currency text, currency_symbol text, "
-#           + "projects_count integer, queued_projects_count integer, favorites_count integer, comments_count integer, "
-#           + "rating_count integer, rating_average real, difficulty_count integer, difficulty_average text, "
-#           + "yardage_max real, yardage real, gauge real, row_gauge text, sizes_available text, author_id integer, "
-#           + "author_name text, author_permalink text, author_patterns_count integer, author_favorites_count integer, "
-#           + "author_users_usernames text, author_users_ids text, num_photos integer, notes_length integer, "
-#           + "pattern_type_permalink text, pattern_type_name text, pattern_type_clothing text, craft_permalink text, "
-#           + "craft_name text, pattern_categories_name text, pattern_attributes_permalinks text, gauge_pattern text, "
-#           + "gauge_description text, yarn_weight_description text, yardage_description text, packs_yarn_ids text, "
-#           + "packs_yarn_names text, packs_colorways text)")
+c.execute("CREATE TABLE patternData1 (id int PRIMARY KEY, name text, permalink text, "
+          + "published text, downloadable integer, "
+          + "ravelry_download integer, free integer, price real, currency text, currency_symbol text, "
+          + "projects_count integer, queued_projects_count integer, favorites_count integer, comments_count integer, "
+          + "rating_count integer, rating_average real, difficulty_count integer, difficulty_average text, "
+          + "yardage_max real, yardage real, gauge real, row_gauge text, sizes_available text, author_id integer, "
+          + "author_name text, author_permalink text, author_patterns_count integer, author_favorites_count integer, "
+          + "author_users_usernames text, author_users_ids text, num_photos integer, notes_length integer, "
+          + "pattern_type_permalink text, pattern_type_name text, pattern_type_clothing text, craft_permalink text, "
+          + "craft_name text, pattern_categories_name text, pattern_attributes_permalinks text, gauge_pattern text, "
+          + "gauge_description text, yarn_weight_description text, yardage_description text, packs_yarn_ids text, "
+          + "packs_yarn_names text, packs_colorways text)")
 
 time_start = time.clock()
 
-# Scraping parameters
-# Scraping test run -- first 5000 pattern IDs
-batchSize = 400  # I'm intentionally using a larger batch size than I feel I ought to for the test, to see if my code
-# for catching timeouts and decreasing batch size works
-patIDs = patternIDs[0:5000:]  # Test the scraping on just the first 5000 pattern IDs
-waitTime = 5  # Time to wait between API requests. I might decrease this if I see in the log files that it takes
-# a few seconds just to parse the data and insert it into the table.
+# # Scraping parameters
+# # Scraping test run -- first 5000 pattern IDs
+# batchSize = 400  # I'm intentionally using a larger batch size than I feel I ought to for the test, to see if my code
+# # for catching timeouts and decreasing batch size works
+# patIDs = patternIDs[0:5000:]  # Test the scraping on just the first 5000 pattern IDs
+# waitTime = 5  # Time to wait between API requests. I might decrease this if I see in the log files that it takes
+# # a few seconds just to parse the data and insert it into the table.
+# tableName = 'patternData1'  # ??? Function doesn't use this yet but might in the future.
+# authTuple = (user, pswd)  # API authentication parameters
+# storedIDsList = []  # List of IDs whose data the function was able to store in the table; should initialize with []
+# failedIDsList = []  # List of IDs whose data the function could not store in the table; should initialize with []
+# # storedIDsList and failedIDsList will end up as lists of strings
+
+# Scraping parameters--full run
+batchSize = 200
+patIDs = patternIDs[0:100000:]  # Test the scraping on just the first 5000 pattern IDs
+waitTime = 5  # Time to wait between API requests.
 tableName = 'patternData1'  # ??? Function doesn't use this yet but might in the future.
 authTuple = (user, pswd)  # API authentication parameters
 storedIDsList = []  # List of IDs whose data the function was able to store in the table; should initialize with []
