@@ -247,7 +247,9 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
 
     if batchSize < 1:  # Recursion stop condition.
 
-        failedIDsList.append(patternIDs)  # Add this ID to the list of failed IDs.
+        for ID in patternIDs:  # patternIDs should at this point be a list holding single ID, but loop through in case
+            # there are more IDs than expected
+            failedIDsList.append(ID)  # Add this ID to the list of failed IDs.
         logging.info('batchSize decreased to < 1, skipped ID ' + str(patternIDs) + '.')
         # If batchSize < 1, then there must be only 1 ID in patternIDs
         return True  # Return True to go back up the recursion chain.
