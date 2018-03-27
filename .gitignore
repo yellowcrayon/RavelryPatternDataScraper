@@ -3,6 +3,9 @@ workspace.xml
 __pycache__/
 venv/
 
+# jupyter notebook checkpoints
+.ipynb_checkpoints
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
