@@ -105,9 +105,9 @@ def parsePatData(patternData):
         patternDict['name'] = te(patternData.get('name'), str)                                     # String; the pattern name
         patternDict['difficulty_average'] = te(patternData.get('difficulty_average'), str)         # String; the average difficulty rating of the pattern, on a scale from 0 to 10, with ? as unknown
         patternDict['published'] = te(patternData.get('published'), str)                           # String; the date the pattern was published in the form yyyy/mm/dd
-        patternDict['created_at'] = te(patternData.get('created_at', str))                         # String; the date the pattern page was created
-        patternDict['updated_at'] = te(patternData.get('updated_at', str))                         # String; the most recent date that the pattern page was updated on
-        patternDict['generally_available'] = te(patternData.get('generally_available', str))       # String; Ravelry's best estimate of the date when this pattern first became available to the public (not necessarily related to the pattern page creation date)
+        patternDict['created_at'] = te(patternData.get('created_at'), str)                         # String; the date the pattern page was created
+        patternDict['updated_at'] = te(patternData.get('updated_at'), str)                         # String; the most recent date that the pattern page was updated on
+        patternDict['generally_available'] = te(patternData.get('generally_available'), str)       # String; Ravelry's best estimate of the date when this pattern first became available to the public (not necessarily related to the pattern page creation date)
 
         # Items from 'pattern_author'
         tempData = patternData.get('pattern_author', {})  # Data on the pattern's author
@@ -204,6 +204,7 @@ def makePatternQueryString(IDsList):
     # IDsList should be a list of strings
     s = '+'
     baseString = 'https://api.ravelry.com/patterns.json?ids='
+
     queryString = baseString + s.join(IDsList)  # Concatenate all elements in patIDs using s as a separator
 
     return queryString
