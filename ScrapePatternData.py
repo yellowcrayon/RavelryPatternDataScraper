@@ -67,7 +67,9 @@ batchSize = 200
 # patIDs = patternIDs[100000:300001:]  # Scraping the next 200 000 pattern
 # patIDs = patternIDs[300000:500001:]  # Scraping the next 200 000 pattern IDs
 # patIDs = patternIDs[500000:]  # Scraping the rest of the pattern IDs, should be about 250 000 IDs
-patIDs = patternIDs[0:1000:]  # Test the scraper by getting the first 1000 patterns
+# patIDs = patternIDs[0:1000:]  # Test the scraper by getting the first 1000 patterns
+# patIDs = patternIDs[1000:100000:]
+patIDs = patternIDs[100000:400000:]
 waitTime = 5  # Time to wait between API requests.
 tableName = 'patternData1'  # ??? Function doesn't use this yet but might in the future.
 authTuple = (user, pswd)  # API authentication parameters
@@ -84,13 +86,13 @@ conn.close()
 # Save the stored and failed IDs lists to files
 mode = 'a'
 
-path = 'C:/Users/Jamie/Desktop/storedIDs2.txt'
+path = 'C:/Users/Jamie/Desktop/storedIDs3.txt'
 storedIDsList = map(lambda x: x + '\n', storedIDsList)  # Add a newline character after each ID in the list
 with open(path, mode) as out:
     out.writelines(map(str, storedIDsList))  # Using map is a quick and dirty way to turn storedIDsList into an iterator
     # storedIDsList is already a list of strings, so there's probably a better way to do this.
 
-path = 'C:/Users/Jamie/Desktop/failedIDs2.txt'
+path = 'C:/Users/Jamie/Desktop/failedIDs3.txt'
 failedIDsList = map(lambda x: x + '\n', failedIDsList)  # Add a newline character after each ID in the list
 with open(path, mode) as out:
     out.writelines(map(str, failedIDsList))
