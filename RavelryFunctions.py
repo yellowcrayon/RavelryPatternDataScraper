@@ -102,9 +102,12 @@ def parsePatData(patternData):
         patternDict['yardage_description'] = te(patternData.get('yardage_description'), str)       # String; string describing yardage
         patternDict['currency_symbol'] = te(patternData.get('currency_symbol'), str)               # String; currency symbol, e.g. $
         patternDict['currency'] = te(patternData.get('currency'), str)                             # String; a string describing the currency, e.g. USD
-        patternDict['name'] = te(patternData.get('name'), str)  # String; the pattern name
+        patternDict['name'] = te(patternData.get('name'), str)                                     # String; the pattern name
         patternDict['difficulty_average'] = te(patternData.get('difficulty_average'), str)         # String; the average difficulty rating of the pattern, on a scale from 0 to 10, with ? as unknown
         patternDict['published'] = te(patternData.get('published'), str)                           # String; the date the pattern was published in the form yyyy/mm/dd
+        patternDict['created_at'] = te(patternData.get('created_at', str))                         # String; the date the pattern page was created
+        patternDict['updated_at'] = te(patternData.get('updated_at', str))                         # String; the most recent date that the pattern page was updated on
+        patternDict['generally_available'] = te(patternData.get('generally_available', str))       # String; Ravelry's best estimate of the date when this pattern first became available to the public (not necessarily related to the pattern page creation date)
 
         # Items from 'pattern_author'
         tempData = patternData.get('pattern_author', {})  # Data on the pattern's author
@@ -209,7 +212,8 @@ def makePatternQueryString(IDsList):
 def constructPatternTuple(pD):
     """This function takes in a dictionary of parsed pattern data and returns an ordered list of pattern data"""
 
-    patternTuple = (pD['id'], pD['name'], pD['permalink'], pD['published'],
+    patternTuple = (pD['id'], pD['name'], pD['permalink'],
+                    pD['published'], pD['created_at'], pD['updated_at'], pD['generally_available'],
                     pD['downloadable'], pD['ravelry_download'],
                     pD['free'], pD['price'], pD['currency'], pD['currency_symbol'],
                     pD['projects_count'], pD['queued_projects_count'], pD['favorites_count'], pD['comments_count'],
@@ -293,7 +297,7 @@ def scrapeRavelryPatternData(c, conn, tableName, patternIDs, batchSize, waitTime
                     patternTuple = constructPatternTuple(patternDict)  # Parse our pattern data into an ordered tuple.
 
                     # Insert data from this pattern into the table.
-                    tableString = ''' INSERT OR IGNORE INTO patternData1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''  # Ignores entries with a repeated primary key (the pattern ID)
+                    tableString = ''' INSERT OR IGNORE INTO patternData1 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''  # Ignores entries with a repeated primary key (the pattern ID)
                     c.execute(tableString, patternTuple)
                     # TODO: Write a function to generate the tableString,
                     # ??? maybe use that function to generate the tableSTring in the main code
